@@ -9,6 +9,26 @@
     <title>Clicker Empire Game</title>
 </head>
 <body>
-    
+    <div id="welcom" class="vh-100 d-flex justify-content-center flex-column align-items-center bg-dark">
+        <div id="userInput" class="bg-white p-4 contaier d-flex justify-content-center flex-column align-items-center" >
+            <h2 class="pb-2 col">Click Empire Game</h2>
+            <form class="col" onsubmit="initializeUser(); event.preventDefault();">
+                <div class="form-group">
+                    <input id="userName" class="form-control" type="text" placeholder="Your name" required>
+                </div>
+                <div class="form-group d-flex justify-content-between">
+                    <button class="btn btn-primary px-5" type="submit">New</button>
+                    <button class="btn btn-primary px-5" type="submit">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="game">
+        <div id="burger"></div>
+        <div id="contaier">
+            <div id="user"></div>
+            <div id="commodity"></div>
+        </div>
+    </div>
 </body>
 </html>
