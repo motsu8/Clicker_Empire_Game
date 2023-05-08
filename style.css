@@ -6,3 +6,20 @@
     width: 100%;
     height: 100%;
 }
+
+.items{
+    background-color:#3c5279;
+}
+
+.itemImg{
+    height: 150px;
+    width: auto;
+}
+
+.commodity{
+    height: 75%;
+}
+
+.overflow-scroll{
+    overflow: auto;
+}
