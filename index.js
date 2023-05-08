@@ -17,9 +17,9 @@ class User {
         this.money = 15000;
         // key: commodityName
         // value: amount
-        this.hasCommodity = new Map();
+        this.amountCommodity = new Map();
         for (let ele of commodity) {
-            this.hasCommodity.set(ele.name, 0);
+            this.amountCommodity.set(ele.name, 0);
         }
     }
 }
@@ -46,13 +46,13 @@ const commodity = [
 ];
 
 function hidePage(ele) {
-    ele.classList.remove("d-block");
+    ele.classList.remove("d-flex");
     ele.classList.add("d-none");
 }
 
 function drawPage(ele) {
     ele.classList.remove("d-none");
-    ele.classList.add("d-block");
+    ele.classList.add("d-flex");
 }
 
 function initializeUser() {
@@ -66,16 +66,11 @@ function createGamePage(user) {
     const container = document.createElement("div");
     container.classList.add(
         "container",
-        "text-white",
-        "align-items-center",
-        "vh-100",
         "d-flex",
-        "justify-content-center"
+        "justify-content-center",
+        "text-white",
+        "vh-75",
     );
-    // container.innerHTML = `
-    // ${createBurger(user)}
-    // ${createUserInfo(user)}
-    // `;
 
     container.append(createBurger(user))
     container.append(createUserInfo(user))
@@ -94,8 +89,8 @@ function createBurger(user){
     burger.classList.add("col-4")
     burger.innerHTML = `
         <div id="burgerInfo" class="d-flex flex-column align-items-center bg-navy my-3">
-            <div>${user.hasCommodity.get("burger")} Burger</div>
-            <div>1click ${user.hasCommodity.get("Flip")}</div>
+            <div>${user.amountCommodity.get("burger")} Burger</div>
+            <div>1click ${user.amountCommodity.get("Flip")}</div>
         </div>
         <div>
             <div>
@@ -106,14 +101,11 @@ function createBurger(user){
 
     const burgerEvent = burger.querySelectorAll("#burgerImg")[0]
     burgerEvent.addEventListener("click", ()=>{
-        const current = user.hasCommodity.get("burger")
-        user.hasCommodity.set("burger", current+1)
+        const current = user.amountCommodity.get("burger")
+        user.amountCommodity.set("burger", current+1)
         updateGamePage(user);
-        console.log(user.hasCommodity.get("burger"))
+        console.log(user.amountCommodity.get("burger"))
     })
-
-    console.log(burgerEvent)
-    console.log(user.hasCommodity.entries())
 
     return burger;
 }
@@ -122,7 +114,7 @@ function createUserInfo(user) {
     const userInfo = document.createElement("div");
     userInfo.classList.add("col-7");
     userInfo.innerHTML = `
-        <div id="userInfo" class="container bg-navy">
+        <div id="userInfo" class="container bg-navy my-3">
             <div class="row row-cols-1 row-cols-sm-2">
                 <div id="name" class="col">${user.name}</div>
                 <div id="age" class="col">${user.age}</div>
@@ -130,10 +122,22 @@ function createUserInfo(user) {
                 <div id="money" class="col">${user.money}</div>
             </div>
         </div>
-        <div>123456</div>
+        <div id="buyItems">
+            ${createBuyItems()}
+        </div>
     `;
 
     return userInfo;
+}
+
+function createBuyItems(){
+    let container = ``;
+    for(let ele of commodity){
+        container += `
+            <div>${ele.name}</div>
+        `;
+    }
+    return container
 }
 
 // setInterval(function(){
