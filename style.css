@@ -1,3 +1,8 @@
 .bg-navy{
     background-color: #3c5279;
 }
+
+#burgerImg{
+    width: 100%;
+    height: 100%;
+}
