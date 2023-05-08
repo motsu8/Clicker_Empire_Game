@@ -24,7 +24,7 @@ const commodity = [
         isSecInc: true,
         return: 0.0007,
         maxPurchases: Infinity,
-        price: 	300000,
+        price: 300000,
     },
     {
         name: "Lemonade Stand",
@@ -38,7 +38,7 @@ const commodity = [
         isSecInc: true,
         return: 120,
         maxPurchases: 500,
-        price: 	100000,
+        price: 100000,
     },
     {
         name: "House",
@@ -59,14 +59,14 @@ const commodity = [
         isSecInc: true,
         return: 500000,
         maxPurchases: 20,
-        price: 	250000000,
+        price: 250000000,
     },
     {
         name: "Industrial Space",
         isSecInc: true,
         return: 2200000,
         maxPurchases: 10,
-        price: 	1000000000,
+        price: 1000000000,
     },
     {
         name: "Hotel Skyscraper",
@@ -90,7 +90,10 @@ class User {
         this.old = 20;
         this.days = 0;
         this.money = 15000;
-        this.commodity = new Commodity();
+        this.hasCommodity = new Map();
+        for (let ele of commodity) {
+            this.hasCommodity.set(ele.name, 0);
+        }
     }
 }
 
