@@ -1,12 +1,17 @@
 class Commodity {
-    constructor(name, isSecInc, returnMoney, maxAmount, price, currentAmount, url) {
+    constructor(name, isSecInc, value, maxAmount, price, currentAmount, url) {
         this.name = name;
         this.isSecInc = isSecInc;
-        this.returnMoney = returnMoney;
+        this.value = value;
         this.maxAmount = maxAmount;
         this.currentAmount = currentAmount;
         this.price = price;
         this.url = url;
+        this.returnMoney = 0
+    }
+    increase(i){
+        this.currentAmount += i;
+        this.returnMoney = this.value * this.currentAmount
     }
 }
 
@@ -21,17 +26,34 @@ class User {
             this.amountCommodity.set(ele.name, ele);
         }
     }
+
+    fncPerSec(){
+        // 日付
+        this.days += 1
+        // 年齢
+        this.age = 20 + Math.floor(this.days / 365)
+        // 毎秒所得
+        for(let commodity of this.amountCommodity.values()){
+            if(commodity.isSecInc){
+                this.money += commodity.returnMoney
+            }
+        }
+    }
 }
 
 const config = {
     welcomePage: document.getElementById("welcome"),
     gamePage: document.getElementById("game"),
     name: document.getElementById("userName"),
+    burger: document.getElementById("burger"),
+    userCtrl: document.getElementById("userCtrl"),
+    userInfo: document.getElementById("userInfo"),
+    buyItems: document.getElementById("buyItems"),
 };
 
 const commodity = [
-    new Commodity("burger", false, 25, Infinity, 0, 1, "https://cdn.pixabay.com/photo/2014/04/02/17/00/burger-307648_960_720.png"),
-    new Commodity("Flip", true, 25, Infinity, 500, 0, "https://cdn.pixabay.com/photo/2019/06/30/20/09/grill-4308709_960_720.png"),
+    new Commodity("burger", false, 25, Infinity, 0, 0, "https://cdn.pixabay.com/photo/2014/04/02/17/00/burger-307648_960_720.png"),
+    new Commodity("Flip", false, 25, 500, 15000, 0, "https://cdn.pixabay.com/photo/2019/06/30/20/09/grill-4308709_960_720.png"),
     new Commodity("ETF Stock", true, 0.001, Infinity, 300000, 0, "https://cdn.pixabay.com/photo/2018/03/15/11/29/bitcoin-3227945_960_720.png"),
     new Commodity("ETF Bounds", true, 0.0007, Infinity, 300000, 0, "https://cdn.pixabay.com/photo/2018/03/15/11/29/bitcoin-3227945_960_720.png"),
     new Commodity("Lemonade Stand", true, 30, 1000, 30000, 0, "https://cdn.pixabay.com/photo/2012/04/15/20/36/juice-35236_960_720.png"),
@@ -58,83 +80,54 @@ function initializeUser() {
     const user = new User(config.name.value);
     hidePage(config.welcomePage);
     drawPage(config.gamePage);
-    config.gamePage.append(createGamePage(user));
+    createBurger(user);
+    createUserInfo(user);
+    createBuyItems(user);
+
+    setInterval(()=>{
+        user.fncPerSec();
+        update(user, config.userInfo, createUserInfo)
+    }, 1000)
 }
 
-function createGamePage(user) {
-    const container = document.createElement("div");
-    container.classList.add(
-        "container",
-        "d-flex",
-        "justify-content-center",
-        "text-white",
-        "vh-100",
-        "flex-nowrap",
-    );
-
-    container.append(createBurger(user))
-    container.append(createUserInfo(user))
-  
-    return container;
+function update(user, element, fnc){
+    element.innerHTML = "";
+    fnc(user);
 }
 
-function updateGamePage(user){
-    config.gamePage.innerHTML = "";
-    config.gamePage.append(createGamePage(user));
-}
-
-function createBurger(user){
+const createBurger = (user) => {
     const currentBurger = user.amountCommodity.get("burger")
-    const burger = document.createElement("div");
-    burger.setAttribute("id", "burger");
-    burger.classList.add("col-4")
-    burger.innerHTML = `
+    config.burger.innerHTML = `
         <div id="burgerInfo" class="d-flex flex-column align-items-center bg-navy my-3">
             <div>${currentBurger.currentAmount} Burger</div>
             <div>1click ${user.amountCommodity.get("Flip")}</div>
         </div>
         <div>
-            <div>
-                <img src="${currentBurger.url}" width=80%  id="burgerImg">
-            </div>
+            <img src="${currentBurger.url}" width=80%  id="burgerImg">
         </div>
     `;
 
     const burgerEvent = burger.querySelectorAll("#burgerImg")[0]
     burgerEvent.addEventListener("click", ()=>{
         currentBurger.currentAmount += 1
-        updateGamePage(user);
+        update(user, config.burger, createBurger);
     })
-
-    return burger;
 }
 
-function createUserInfo(user) {
-    const userInfo = document.createElement("div");
-    userInfo.classList.add("col-7");
-    userInfo.innerHTML = `
-        <div id="userInfo" class="container bg-navy my-3">
-            <div class="row row-cols-1 row-cols-sm-2">
-                <div id="name" class="col">${user.name}</div>
-                <div id="age" class="col">${user.age}</div>
-                <div id="days" class="col">${user.days}</div>
-                <div id="money" class="col">${user.money}</div>
-            </div>
+const createUserInfo = (user) => {
+    config.userInfo.innerHTML = `
+        <div class="row row-cols-1 row-cols-sm-2">
+            <div id="name" class="col">${user.name}</div>
+            <div id="age" class="col">${user.age}</div>
+            <div id="days" class="col">${user.days}</div>
+            <div id="money" class="col">${user.money}</div>
         </div>
     `;
-    userInfo.append(createBuyItems(user))
-
-    return userInfo;
 }
 
-function createBuyItems(user){
-    const container = document.createElement("div");
+const createBuyItems = (user) => {
     const commodityList = document.createElement("div");
     const commodityPage = document.createElement("div");
-    container.classList.add(
-        "commodity",
-        "overflow-scroll",
-    )
     commodityList.classList.add(
         "d-flex",
         "flex-column",
@@ -159,50 +152,48 @@ function createBuyItems(user){
     commodityEvent.forEach(commodity=>{
         commodity.addEventListener("click", ()=>{
             hidePage(commodityList)
-            commodityPage.innerHTML = createBuyPage(user, commodity.id)
+            const item = user.amountCommodity.get(commodity.id);
+            commodityPage.innerHTML = createBuyPage(item)
             
+            const increaseNum = commodityPage.querySelectorAll("#increaseValue")[0]
             commodityPage.querySelectorAll("#submit")[0].addEventListener("click",()=>{
-                user.amountCommodity.get(commodity.id).currentAmount += 1
+                item.increase(parseInt(increaseNum.value))
+                update(user, config.buyItems, createBuyItems)
                 hidePage(commodityPage)
-                updateGamePage(user)
                 drawPage(commodityList)
             });
+
             commodityPage.querySelectorAll("#back")[0].addEventListener("click",()=>{
                 hidePage(commodityPage)
-                updateGamePage(user)
                 drawPage(commodityList)
             });
             drawPage(commodityPage)
         })
     })
 
-    container.append(commodityList)
-    container.append(commodityPage)
-
-    return container
+    config.buyItems.append(commodityList)
+    config.buyItems.append(commodityPage)
 }
 
-function createBuyPage(user, ele){
-    const commodity = user.amountCommodity.get(ele);
+function createBuyPage(ele){
     const container = `
         <div class="items">
-            <h3 class="p-3">${commodity.name}</h3>
+            <h3 class="p-3">${ele.name}</h3>
             <div class="container d-flex justify-content-around">
-                <img src="${commodity.url}" class="col-4 itemImg">
+                <img src="${ele.url}" class="col-4 itemImg">
                 <div class="col-8 d-flex flex-column">
-                    <div>maxAmount: ${commodity.maxAmount}</div>
-                    <div>currentAmount: ${commodity.currentAmount}</div>
-                    <div>price: ${commodity.price}</div>
+                    <div>maxAmount: ${ele.maxAmount}</div>
+                    <div>currentAmount: ${ele.currentAmount}</div>
+                    <div>price: ${ele.price}</div>
                 </div>
             </div>
-            <button id="submit" class="btn btn-primary">submit</button>
-            <button id="back" class="btn btn-primary">back</button>
+            <div id="increase">
+                <input id="increaseValue" type="number" min=0 value=0 class=""></input>
+                <button id="submit" class="btn btn-primary">submit</button>
+                <button id="back" class="btn btn-primary">back</button>
+            </div>
         </div>
     `;
+
     return container;
 }
-
-// setInterval(function(){
-//     temp.setAmount()
-//     console.log(temp.getReturn());
-// },1000)

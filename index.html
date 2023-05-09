@@ -10,7 +10,7 @@
     <title>Clicker Empire Game</title>
 </head>
 <body>
-    <div id="welcome" class="d-flex vh-100 bg-dark justify-content-center flex-column align-items-center">
+    <div id="welcome" class="d-flex vh-100 justify-content-center flex-column align-items-center">
         <div id="userInput" class="bg-white p-4 contaier d-flex justify-content-center flex-column align-items-center" >
             <h2 class="pb-2 col">Click Empire Game</h2>
             <form class="col" onsubmit="initializeUser(); event.preventDefault();">
@@ -24,7 +24,13 @@
             </form>
         </div>
     </div>
-    <div id="game" class="d-none vh-100 bg-dark justify-content-center align-items-center"></div>
+    <div id="game" class="d-none vh-100 container text-white py-5 flex-nowrap">
+        <div id="burger" class="col-4"></div>
+        <div id="userCtrl" class="col-8">
+            <div id="userInfo" class="container bg-navy my-3"></div>
+            <div id="buyItems" class="commodity overflow-scroll"></div>
+        </div>
+    </div>
 
     <script src="index.js"></script>
 </body>
