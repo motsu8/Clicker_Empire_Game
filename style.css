@@ -6,18 +6,13 @@ body{
     background-color: #3c5279;
 }
 
-#burgerImg{
-    width: 100%;
-    height: 100%;
+.itemImg{
+    object-fit: cover;
 }
 
 .items{
+    height: 200px;
     background-color:#3c5279;
-}
-
-.itemImg{
-    height: 150px;
-    width: auto;
 }
 
 .commodity{

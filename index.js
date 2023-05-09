@@ -113,7 +113,7 @@ const createBurger = (user) => {
             <div>${user.amountCommodity.get("Flip").returnMoney} / click</div>
         </div>
         <div>
-            <img src="${currentBurger.url}" width=80%  id="burgerImg">
+            <img src="${currentBurger.url}" width=80%  id="burgerImg" class="itemImg">
         </div>
     `;
 
@@ -130,9 +130,9 @@ const createUserInfo = (user) => {
     config.userInfo.innerHTML = `
         <div class="row row-cols-1 row-cols-sm-2">
             <div id="name" class="col">${user.name}</div>
-            <div id="age" class="col">${user.age}</div>
-            <div id="days" class="col">${user.days}</div>
-            <div id="money" class="col">${user.money}</div>
+            <div id="age" class="col">${user.age} years old</div>
+            <div id="days" class="col">${user.days} days</div>
+            <div id="money" class="col">$ ${user.money}</div>
         </div>
     `;
 }
@@ -152,10 +152,12 @@ const createBuyItems = (user) => {
     for(let ele of user.amountCommodity.values()){
         if(ele.name == "burger") continue;
         commodityList.innerHTML += `
-            <div id="${ele.name}" class="items my-2">
-                <h3 class="p-3">${ele.name}</h3>
-                <img src="${ele.url}" class="itemImg px-3">
-                <div>${ele.currentAmount}</div>
+            <div id="${ele.name}" class="items my-2 container d-flex">
+                <img src="${ele.url}" class="img-fluid p-3 col-4">
+                <div class="col-8">
+                    <h3 class="p-3">${ele.name}</h3>
+                    <div class="col-8">${ele.currentAmount}</div>
+                </div>
             </div>
         `;
     }
