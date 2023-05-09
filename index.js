@@ -152,12 +152,19 @@ const createBuyItems = (user) => {
     commodityEvent.forEach(commodity=>{
         commodity.addEventListener("click", ()=>{
             hidePage(commodityList)
+            drawPage(commodityPage)
             const item = user.amountCommodity.get(commodity.id);
             commodityPage.innerHTML = createBuyPage(item)
             
             const increaseNum = commodityPage.querySelectorAll("#increaseValue")[0]
             commodityPage.querySelectorAll("#submit")[0].addEventListener("click",()=>{
-                item.increase(parseInt(increaseNum.value))
+                if(item.maxAmount < item.currentAmount + parseInt(increaseNum.value)){
+                    alert("最大購入数を超えています。")
+                }else if(user.money < item.price * parseInt(increaseNum.value)){
+                    alert("現在の所持金では購入できません。")
+                }else{
+                    item.increase(parseInt(increaseNum.value))
+                }
                 update(user, config.buyItems, createBuyItems)
                 hidePage(commodityPage)
                 drawPage(commodityList)
@@ -167,7 +174,6 @@ const createBuyItems = (user) => {
                 hidePage(commodityPage)
                 drawPage(commodityList)
             });
-            drawPage(commodityPage)
         })
     })
 
