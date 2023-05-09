@@ -111,9 +111,9 @@ const createBurger = (user) => {
     const currentBurger = user.amountCommodity.get("burger")
     config.burger.innerHTML = `
         <div id="burgerInfo" class="d-flex flex-column justify-content-center align-items-center bg-navy my-3">
-            <div>${currentBurger.currentAmount} Burger</div>
-            <div>${user.amountCommodity.get("Flip").returnMoney} / click</div>
-            <div>${user.daysIncrease} / days</div>
+            <div class="info">${currentBurger.currentAmount} Burger</div>
+            <div class="info">${user.amountCommodity.get("Flip").returnMoney} / click</div>
+            <div class="info">${user.daysIncrease} / days</div>
         </div>
         <div>
             <img src="${currentBurger.url}" width=80%  id="burgerImg" class="itemImg">
@@ -132,10 +132,10 @@ const createBurger = (user) => {
 const createUserInfo = (user) => {
     config.userInfo.innerHTML = `
         <div class="row row-cols-1 row-cols-sm-2">
-            <div id="name" class="col">${user.name}</div>
-            <div id="age" class="col">${user.age} years old</div>
-            <div id="days" class="col">${user.days} days</div>
-            <div id="money" class="col">$ ${user.money}</div>
+            <div id="name" class="col info">${user.name}</div>
+            <div id="age" class="col info">${user.age} years old</div>
+            <div id="days" class="col info">${user.days} days</div>
+            <div id="money" class="col info">$ ${user.money}</div>
         </div>
     `;
 }
@@ -155,7 +155,7 @@ const createBuyItems = (user) => {
     for(let ele of user.amountCommodity.values()){
         if(ele.name == "burger") continue;
         commodityList.innerHTML += `
-            <div id="${ele.name}" class="items my-2 container d-flex">
+            <div id="${ele.name}" class="items my-2 container d-flex info">
                 <img src="${ele.url}" class="img-fluid p-3 col-4">
                 <div class="col-8">
                     <div class="d-flex justify-content-between">

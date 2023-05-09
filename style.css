@@ -10,6 +10,14 @@ body{
     object-fit: cover;
 }
 
+.info{
+    text-align: center;
+    border-bottom:solid 1px;
+    border-right:solid 1px;
+    border-color: black;
+    width: 100%;
+}
+
 .items{
     height: 200px;
     background-color:#3c5279;
