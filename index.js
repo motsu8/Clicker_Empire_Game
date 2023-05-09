@@ -22,6 +22,7 @@ class User {
         this.age = 20;
         this.days = 0;
         this.money = 15000;
+        this.daysIncrease = 0;
         this.amountCommodity = new Map();
         for (let ele of commodity) {
             this.amountCommodity.set(ele.name, ele);
@@ -36,9 +37,10 @@ class User {
         // 毎秒所得
         for(let commodity of this.amountCommodity.values()){
             if(commodity.isSecInc){
-                this.money += commodity.returnMoney
+                this.daysIncrease += commodity.returnMoney
             }
         }
+        this.money += this.daysIncrease
     }
 
     payment(fee){
@@ -63,7 +65,7 @@ const config = {
 
 const commodity = [
     new Commodity("burger", false, 25, Infinity, 0, 0, "https://cdn.pixabay.com/photo/2014/04/02/17/00/burger-307648_960_720.png"),
-    new Commodity("Flip", false, 25, 500, 15000, 1, "https://cdn.pixabay.com/photo/2019/06/30/20/09/grill-4308709_960_720.png"),
+    new Commodity("Flip", false, 1000, 500, 15000, 1, "https://cdn.pixabay.com/photo/2019/06/30/20/09/grill-4308709_960_720.png"),
     new Commodity("ETF Stock", true, 0.001, Infinity, 300000, 0, "https://cdn.pixabay.com/photo/2018/03/15/11/29/bitcoin-3227945_960_720.png"),
     new Commodity("ETF Bounds", true, 0.0007, Infinity, 300000, 0, "https://cdn.pixabay.com/photo/2018/03/15/11/29/bitcoin-3227945_960_720.png"),
     new Commodity("Lemonade Stand", true, 30, 1000, 30000, 0, "https://cdn.pixabay.com/photo/2012/04/15/20/36/juice-35236_960_720.png"),
@@ -111,6 +113,7 @@ const createBurger = (user) => {
         <div id="burgerInfo" class="d-flex flex-column justify-content-center align-items-center bg-navy my-3">
             <div>${currentBurger.currentAmount} Burger</div>
             <div>${user.amountCommodity.get("Flip").returnMoney} / click</div>
+            <div>${user.daysIncrease} / days</div>
         </div>
         <div>
             <img src="${currentBurger.url}" width=80%  id="burgerImg" class="itemImg">
@@ -159,7 +162,8 @@ const createBuyItems = (user) => {
                         <h3 class="p-3">${ele.name}</h3>
                         <h3 class="p-3">${ele.currentAmount}</h3>
                     </div>
-                    <div class="p-3">price: $${ele.price}</div>
+                    <div class="p-2">price: $${ele.price}</div>
+                    <div class="p-2">return: $${ele.value}</div>
                 </div>
             </div>
         `;
@@ -199,18 +203,6 @@ const createBuyItems = (user) => {
     config.buyItems.append(commodityList)
     config.buyItems.append(commodityPage)
 }
-
-
-`            <div id="${ele.name}" class="items my-2 container d-flex">
-                <img src="${ele.url}" class="img-fluid p-3 col-4">
-                <div class="col-8">
-                    <div class="d-flex justify-content-between">
-                        <h3 class="p-3">${ele.name}</h3>
-                        <h3 class="p-3">${ele.currentAmount}</h3>
-                    </div>
-                    <div class="p-3">price: $${ele.price}</div>
-                </div>
-            </div>`
 
 function createBuyPage(ele){
     const container = `
