@@ -9,9 +9,10 @@ class Commodity {
         this.url = url;
         this.returnMoney = 0
     }
-    increase(i){
+    purchase(i){
         this.currentAmount += i;
         this.returnMoney = this.value * this.currentAmount
+        return i * this.price
     }
 }
 
@@ -38,6 +39,10 @@ class User {
                 this.money += commodity.returnMoney
             }
         }
+    }
+
+    payment(fee){
+        this.money -= fee;
     }
 }
 
@@ -163,7 +168,8 @@ const createBuyItems = (user) => {
                 }else if(user.money < item.price * parseInt(increaseNum.value)){
                     alert("現在の所持金では購入できません。")
                 }else{
-                    item.increase(parseInt(increaseNum.value))
+                    const fee = item.purchase(parseInt(increaseNum.value))
+                    user.payment(fee);
                 }
                 update(user, config.buyItems, createBuyItems)
                 hidePage(commodityPage)
