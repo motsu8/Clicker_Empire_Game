@@ -7,7 +7,7 @@ class Commodity {
         this.currentAmount = currentAmount;
         this.price = price;
         this.url = url;
-        this.returnMoney = 0
+        this.returnMoney = currentAmount * value
     }
     purchase(i){
         this.currentAmount += i;
@@ -44,6 +44,11 @@ class User {
     payment(fee){
         this.money -= fee;
     }
+
+    makeBurger(){
+        const performance = this.amountCommodity.get("Flip").returnMoney
+        this.money += performance;
+    }
 }
 
 const config = {
@@ -58,7 +63,7 @@ const config = {
 
 const commodity = [
     new Commodity("burger", false, 25, Infinity, 0, 0, "https://cdn.pixabay.com/photo/2014/04/02/17/00/burger-307648_960_720.png"),
-    new Commodity("Flip", false, 25, 500, 15000, 0, "https://cdn.pixabay.com/photo/2019/06/30/20/09/grill-4308709_960_720.png"),
+    new Commodity("Flip", false, 25, 500, 15000, 1, "https://cdn.pixabay.com/photo/2019/06/30/20/09/grill-4308709_960_720.png"),
     new Commodity("ETF Stock", true, 0.001, Infinity, 300000, 0, "https://cdn.pixabay.com/photo/2018/03/15/11/29/bitcoin-3227945_960_720.png"),
     new Commodity("ETF Bounds", true, 0.0007, Infinity, 300000, 0, "https://cdn.pixabay.com/photo/2018/03/15/11/29/bitcoin-3227945_960_720.png"),
     new Commodity("Lemonade Stand", true, 30, 1000, 30000, 0, "https://cdn.pixabay.com/photo/2012/04/15/20/36/juice-35236_960_720.png"),
@@ -105,7 +110,7 @@ const createBurger = (user) => {
     config.burger.innerHTML = `
         <div id="burgerInfo" class="d-flex flex-column align-items-center bg-navy my-3">
             <div>${currentBurger.currentAmount} Burger</div>
-            <div>1click ${user.amountCommodity.get("Flip")}</div>
+            <div>${user.amountCommodity.get("Flip").returnMoney} / click</div>
         </div>
         <div>
             <img src="${currentBurger.url}" width=80%  id="burgerImg">
@@ -115,6 +120,8 @@ const createBurger = (user) => {
     const burgerEvent = burger.querySelectorAll("#burgerImg")[0]
     burgerEvent.addEventListener("click", ()=>{
         currentBurger.currentAmount += 1
+        user.makeBurger()
+        update(user, config.userInfo, createUserInfo);
         update(user, config.burger, createBurger);
     })
 }
@@ -172,6 +179,7 @@ const createBuyItems = (user) => {
                     user.payment(fee);
                 }
                 update(user, config.buyItems, createBuyItems)
+                update(user, config.burger, createBurger);
                 hidePage(commodityPage)
                 drawPage(commodityList)
             });
