@@ -108,7 +108,7 @@ function update(user, element, fnc){
 const createBurger = (user) => {
     const currentBurger = user.amountCommodity.get("burger")
     config.burger.innerHTML = `
-        <div id="burgerInfo" class="d-flex flex-column align-items-center bg-navy my-3">
+        <div id="burgerInfo" class="d-flex flex-column justify-content-center align-items-center bg-navy my-3">
             <div>${currentBurger.currentAmount} Burger</div>
             <div>${user.amountCommodity.get("Flip").returnMoney} / click</div>
         </div>
@@ -155,8 +155,11 @@ const createBuyItems = (user) => {
             <div id="${ele.name}" class="items my-2 container d-flex">
                 <img src="${ele.url}" class="img-fluid p-3 col-4">
                 <div class="col-8">
-                    <h3 class="p-3">${ele.name}</h3>
-                    <div class="col-8">${ele.currentAmount}</div>
+                    <div class="d-flex justify-content-between">
+                        <h3 class="p-3">${ele.name}</h3>
+                        <h3 class="p-3">${ele.currentAmount}</h3>
+                    </div>
+                    <div class="p-3">price: $${ele.price}</div>
                 </div>
             </div>
         `;
@@ -197,24 +200,39 @@ const createBuyItems = (user) => {
     config.buyItems.append(commodityPage)
 }
 
+
+`            <div id="${ele.name}" class="items my-2 container d-flex">
+                <img src="${ele.url}" class="img-fluid p-3 col-4">
+                <div class="col-8">
+                    <div class="d-flex justify-content-between">
+                        <h3 class="p-3">${ele.name}</h3>
+                        <h3 class="p-3">${ele.currentAmount}</h3>
+                    </div>
+                    <div class="p-3">price: $${ele.price}</div>
+                </div>
+            </div>`
+
 function createBuyPage(ele){
     const container = `
-        <div class="items">
-            <h3 class="p-3">${ele.name}</h3>
-            <div class="container d-flex justify-content-around">
-                <img src="${ele.url}" class="col-4 itemImg">
-                <div class="col-8 d-flex flex-column">
-                    <div>maxAmount: ${ele.maxAmount}</div>
-                    <div>currentAmount: ${ele.currentAmount}</div>
-                    <div>price: ${ele.price}</div>
+        <div class="items my-2 container d-flex">
+            <img src="${ele.url}" class="p-3 col-4 img-fluid">
+            <div class="col-8">
+                <div class="d-flex">
+                    <h3 class="py-3">${ele.name}</h3>
+                    <div class="d-flex flex-column p-3">
+                        <div>price: ${ele.price}</div>
+                        <div>currentAmount: ${ele.currentAmount}</div>
+                        <div>maxAmount: ${ele.maxAmount}</div>
+                    </div>
+                </div>
+                <div id="increase" class="p-1">
+                    <input id="increaseValue" type="number" min=0 value=0 class=""></input>
+                    <button id="submit" class="btn btn-primary">submit</button>
+                    <button id="back" class="btn btn-primary">back</button>
                 </div>
             </div>
-            <div id="increase">
-                <input id="increaseValue" type="number" min=0 value=0 class=""></input>
-                <button id="submit" class="btn btn-primary">submit</button>
-                <button id="back" class="btn btn-primary">back</button>
-            </div>
         </div>
+
     `;
 
     return container;
