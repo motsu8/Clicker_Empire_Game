@@ -7,7 +7,7 @@ class Commodity {
         this.currentAmount = currentAmount;
         this.price = price;
         this.url = url;
-        this.returnMoney = 0
+        this.returnMoney = currentAmount * value
     }
     purchase(i){
         this.currentAmount += i;
@@ -44,6 +44,11 @@ class User {
     payment(fee){
         this.money -= fee;
     }
+
+    makeBurger(){
+        const performance = this.amountCommodity.get("Flip").returnMoney
+        this.money += performance;
+    }
 }
 
 const config = {
@@ -58,7 +63,7 @@ const config = {
 
 const commodity = [
     new Commodity("burger", false, 25, Infinity, 0, 0, "https://cdn.pixabay.com/photo/2014/04/02/17/00/burger-307648_960_720.png"),
-    new Commodity("Flip", false, 25, 500, 15000, 0, "https://cdn.pixabay.com/photo/2019/06/30/20/09/grill-4308709_960_720.png"),
+    new Commodity("Flip", false, 25, 500, 15000, 1, "https://cdn.pixabay.com/photo/2019/06/30/20/09/grill-4308709_960_720.png"),
     new Commodity("ETF Stock", true, 0.001, Infinity, 300000, 0, "https://cdn.pixabay.com/photo/2018/03/15/11/29/bitcoin-3227945_960_720.png"),
     new Commodity("ETF Bounds", true, 0.0007, Infinity, 300000, 0, "https://cdn.pixabay.com/photo/2018/03/15/11/29/bitcoin-3227945_960_720.png"),
     new Commodity("Lemonade Stand", true, 30, 1000, 30000, 0, "https://cdn.pixabay.com/photo/2012/04/15/20/36/juice-35236_960_720.png"),
@@ -103,18 +108,20 @@ function update(user, element, fnc){
 const createBurger = (user) => {
     const currentBurger = user.amountCommodity.get("burger")
     config.burger.innerHTML = `
-        <div id="burgerInfo" class="d-flex flex-column align-items-center bg-navy my-3">
+        <div id="burgerInfo" class="d-flex flex-column justify-content-center align-items-center bg-navy my-3">
             <div>${currentBurger.currentAmount} Burger</div>
-            <div>1click ${user.amountCommodity.get("Flip")}</div>
+            <div>${user.amountCommodity.get("Flip").returnMoney} / click</div>
         </div>
         <div>
-            <img src="${currentBurger.url}" width=80%  id="burgerImg">
+            <img src="${currentBurger.url}" width=80%  id="burgerImg" class="itemImg">
         </div>
     `;
 
     const burgerEvent = burger.querySelectorAll("#burgerImg")[0]
     burgerEvent.addEventListener("click", ()=>{
         currentBurger.currentAmount += 1
+        user.makeBurger()
+        update(user, config.userInfo, createUserInfo);
         update(user, config.burger, createBurger);
     })
 }
@@ -123,9 +130,9 @@ const createUserInfo = (user) => {
     config.userInfo.innerHTML = `
         <div class="row row-cols-1 row-cols-sm-2">
             <div id="name" class="col">${user.name}</div>
-            <div id="age" class="col">${user.age}</div>
-            <div id="days" class="col">${user.days}</div>
-            <div id="money" class="col">${user.money}</div>
+            <div id="age" class="col">${user.age} years old</div>
+            <div id="days" class="col">${user.days} days</div>
+            <div id="money" class="col">$ ${user.money}</div>
         </div>
     `;
 }
@@ -145,10 +152,15 @@ const createBuyItems = (user) => {
     for(let ele of user.amountCommodity.values()){
         if(ele.name == "burger") continue;
         commodityList.innerHTML += `
-            <div id="${ele.name}" class="items my-2">
-                <h3 class="p-3">${ele.name}</h3>
-                <img src="${ele.url}" class="itemImg px-3">
-                <div>${ele.currentAmount}</div>
+            <div id="${ele.name}" class="items my-2 container d-flex">
+                <img src="${ele.url}" class="img-fluid p-3 col-4">
+                <div class="col-8">
+                    <div class="d-flex justify-content-between">
+                        <h3 class="p-3">${ele.name}</h3>
+                        <h3 class="p-3">${ele.currentAmount}</h3>
+                    </div>
+                    <div class="p-3">price: $${ele.price}</div>
+                </div>
             </div>
         `;
     }
@@ -172,6 +184,7 @@ const createBuyItems = (user) => {
                     user.payment(fee);
                 }
                 update(user, config.buyItems, createBuyItems)
+                update(user, config.burger, createBurger);
                 hidePage(commodityPage)
                 drawPage(commodityList)
             });
@@ -187,24 +200,39 @@ const createBuyItems = (user) => {
     config.buyItems.append(commodityPage)
 }
 
+
+`            <div id="${ele.name}" class="items my-2 container d-flex">
+                <img src="${ele.url}" class="img-fluid p-3 col-4">
+                <div class="col-8">
+                    <div class="d-flex justify-content-between">
+                        <h3 class="p-3">${ele.name}</h3>
+                        <h3 class="p-3">${ele.currentAmount}</h3>
+                    </div>
+                    <div class="p-3">price: $${ele.price}</div>
+                </div>
+            </div>`
+
 function createBuyPage(ele){
     const container = `
-        <div class="items">
-            <h3 class="p-3">${ele.name}</h3>
-            <div class="container d-flex justify-content-around">
-                <img src="${ele.url}" class="col-4 itemImg">
-                <div class="col-8 d-flex flex-column">
-                    <div>maxAmount: ${ele.maxAmount}</div>
-                    <div>currentAmount: ${ele.currentAmount}</div>
-                    <div>price: ${ele.price}</div>
+        <div class="items my-2 container d-flex">
+            <img src="${ele.url}" class="p-3 col-4 img-fluid">
+            <div class="col-8">
+                <div class="d-flex">
+                    <h3 class="py-3">${ele.name}</h3>
+                    <div class="d-flex flex-column p-3">
+                        <div>price: ${ele.price}</div>
+                        <div>currentAmount: ${ele.currentAmount}</div>
+                        <div>maxAmount: ${ele.maxAmount}</div>
+                    </div>
+                </div>
+                <div id="increase" class="p-1">
+                    <input id="increaseValue" type="number" min=0 value=0 class=""></input>
+                    <button id="submit" class="btn btn-primary">submit</button>
+                    <button id="back" class="btn btn-primary">back</button>
                 </div>
             </div>
-            <div id="increase">
-                <input id="increaseValue" type="number" min=0 value=0 class=""></input>
-                <button id="submit" class="btn btn-primary">submit</button>
-                <button id="back" class="btn btn-primary">back</button>
-            </div>
         </div>
+
     `;
 
     return container;
