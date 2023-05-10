@@ -9,6 +9,7 @@ class Commodity {
         this.url = url;
         this.returnMoney = currentAmount * value
     }
+
     purchase(i){
         this.currentAmount += i;
         this.returnMoney = this.value * this.currentAmount
@@ -23,8 +24,23 @@ class User {
         this.days = 0;
         this.money = 15000;
         this.daysIncrease = 0;
+        this.intervalId = null
+        this.commodity = [
+            new Commodity("burger", false, 25, Infinity, 0, 0, "https://cdn.pixabay.com/photo/2014/04/02/17/00/burger-307648_960_720.png"),
+            new Commodity("Flip", false, 1000, 500, 15000, 1, "https://cdn.pixabay.com/photo/2019/06/30/20/09/grill-4308709_960_720.png"),
+            new Commodity("ETF Stock", true, 0.001, Infinity, 300000, 0, "https://cdn.pixabay.com/photo/2018/03/15/11/29/bitcoin-3227945_960_720.png"),
+            new Commodity("ETF Bounds", true, 0.0007, Infinity, 300000, 0, "https://cdn.pixabay.com/photo/2018/03/15/11/29/bitcoin-3227945_960_720.png"),
+            new Commodity("Lemonade Stand", true, 30, 1000, 30000, 0, "https://cdn.pixabay.com/photo/2012/04/15/20/36/juice-35236_960_720.png"),
+            new Commodity("Ice Cream Truck", true, 120, 500, 100000, 0, "https://cdn.pixabay.com/photo/2016/07/27/03/11/ice-cream-1544475_960_720.png"),
+            new Commodity("House", true, 32000, 100, 20000000, 0, "https://cdn.pixabay.com/photo/2013/07/13/12/48/cottage-160367_960_720.png"),
+            new Commodity("TownHouse", true, 64000, 100, 40000000, 0, "https://cdn.pixabay.com/photo/2012/05/07/17/51/apartment-48821_960_720.png"),
+            new Commodity("Mansion", true, 500000, 20, 250000000, 0, "https://cdn.pixabay.com/photo/2017/11/21/10/26/building-2967810_960_720.png"),
+            new Commodity("Industrial Space", true, 2200000, 10, 1000000000, 0, "https://cdn.pixabay.com/photo/2012/05/07/17/35/factory-48781_960_720.png"),
+            new Commodity("Hotel Skyscraper", true, 25000000, 5, 10000000000, 0, "https://cdn.pixabay.com/photo/2018/08/04/17/33/hotel-3584086_960_720.png"),
+            new Commodity("Bullet-Speed Sky Railway", true, 30000000000, 1, 10000000000000, 0, "https://cdn.pixabay.com/photo/2023/04/05/21/47/train-7902370_960_720.png"),
+        ];
         this.amountCommodity = new Map();
-        for (let ele of commodity) {
+        for (let ele of this.commodity) {
             this.amountCommodity.set(ele.name, ele);
         }
     }
@@ -35,12 +51,16 @@ class User {
         // 年齢
         this.age = 20 + Math.floor(this.days / 365)
         // 毎秒所得
+        this.money += this.daysIncrease
+    }
+
+    setReturnPerDays(){
+        this.daysIncrease = 0;
         for(let commodity of this.amountCommodity.values()){
             if(commodity.isSecInc){
                 this.daysIncrease += commodity.returnMoney
             }
         }
-        this.money += this.daysIncrease
     }
 
     payment(fee){
@@ -61,22 +81,8 @@ const config = {
     userCtrl: document.getElementById("userCtrl"),
     userInfo: document.getElementById("userInfo"),
     buyItems: document.getElementById("buyItems"),
+    btns: document.getElementById("btns"),
 };
-
-const commodity = [
-    new Commodity("burger", false, 25, Infinity, 0, 0, "https://cdn.pixabay.com/photo/2014/04/02/17/00/burger-307648_960_720.png"),
-    new Commodity("Flip", false, 1000, 500, 15000, 1, "https://cdn.pixabay.com/photo/2019/06/30/20/09/grill-4308709_960_720.png"),
-    new Commodity("ETF Stock", true, 0.001, Infinity, 300000, 0, "https://cdn.pixabay.com/photo/2018/03/15/11/29/bitcoin-3227945_960_720.png"),
-    new Commodity("ETF Bounds", true, 0.0007, Infinity, 300000, 0, "https://cdn.pixabay.com/photo/2018/03/15/11/29/bitcoin-3227945_960_720.png"),
-    new Commodity("Lemonade Stand", true, 30, 1000, 30000, 0, "https://cdn.pixabay.com/photo/2012/04/15/20/36/juice-35236_960_720.png"),
-    new Commodity("Ice Cream Truck", true, 120, 500, 100000, 0, "https://cdn.pixabay.com/photo/2016/07/27/03/11/ice-cream-1544475_960_720.png"),
-    new Commodity("House", true, 32000, 100, 20000000, 0, "https://cdn.pixabay.com/photo/2013/07/13/12/48/cottage-160367_960_720.png"),
-    new Commodity("TownHouse", true, 64000, 100, 40000000, 0, "https://cdn.pixabay.com/photo/2012/05/07/17/51/apartment-48821_960_720.png"),
-    new Commodity("Mansion", true, 500000, 20, 250000000, 0, "https://cdn.pixabay.com/photo/2017/11/21/10/26/building-2967810_960_720.png"),
-    new Commodity("Industrial Space", true, 2200000, 10, 1000000000, 0, "https://cdn.pixabay.com/photo/2012/05/07/17/35/factory-48781_960_720.png"),
-    new Commodity("Hotel Skyscraper", true, 25000000, 5, 10000000000, 0, "https://cdn.pixabay.com/photo/2018/08/04/17/33/hotel-3584086_960_720.png"),
-    new Commodity("Bullet-Speed Sky Railway", true, 30000000000, 1, 10000000000000, 0, "https://cdn.pixabay.com/photo/2023/04/05/21/47/train-7902370_960_720.png"),
-];
 
 function hidePage(ele) {
     ele.classList.remove("d-flex");
@@ -95,11 +101,15 @@ function initializeUser() {
     createBurger(user);
     createUserInfo(user);
     createBuyItems(user);
+    createLocalBtn(user);
+    console.log(user)
+    console.log("initialize")
 
-    setInterval(()=>{
+    user.intervalId = setInterval(()=>{
         user.fncPerSec();
         update(user, config.userInfo, createUserInfo)
     }, 1000)
+    return user
 }
 
 function update(user, element, fnc){
@@ -112,8 +122,8 @@ const createBurger = (user) => {
     config.burger.innerHTML = `
         <div id="burgerInfo" class="d-flex flex-column justify-content-center align-items-center bg-navy my-3">
             <div class="info">${currentBurger.currentAmount} Burger</div>
-            <div class="info">${user.amountCommodity.get("Flip").returnMoney} / click</div>
-            <div class="info">${user.daysIncrease} / days</div>
+            <div class="info">$${user.amountCommodity.get("Flip").returnMoney} / click</div>
+            <div class="info">$${user.daysIncrease} / days</div>
         </div>
         <div>
             <img src="${currentBurger.url}" width=80%  id="burgerImg" class="itemImg">
@@ -185,6 +195,7 @@ const createBuyItems = (user) => {
                     alert("現在の所持金では購入できません。")
                 }else{
                     const fee = item.purchase(parseInt(increaseNum.value))
+                    user.setReturnPerDays();
                     user.payment(fee);
                 }
                 update(user, config.buyItems, createBuyItems)
@@ -228,4 +239,33 @@ function createBuyPage(ele){
     `;
 
     return container;
+}
+
+function createLocalBtn(user){
+    config.btns.innerHTML = `
+        <button id="reset" class="m-2 btn btn-primary">reset</button>
+        <button id="save" class="m-2 btn btn-primary">save</button>
+    `;
+
+    console.log(user.name)
+    const jsonUser = JSON.stringify(user)
+
+    config.btns.querySelectorAll("#save")[0].addEventListener("click", ()=>{
+        localStorage.setItem(user.name, jsonUser);
+        console.log(localStorage.getItem(user.name))
+        alert("save!");
+    })
+
+    config.btns.querySelectorAll("#reset")[0].addEventListener("click", ()=>{
+        clearGamePage();
+        clearInterval(user.intervalId);
+        initializeUser();
+    })
+}
+
+function clearGamePage(){
+    config.burger.innerHTML = "";
+    config.userInfo.innerHTML = "";
+    config.buyItems.innerHTML = "";
+    config.btns.innerHTML = "";
 }
