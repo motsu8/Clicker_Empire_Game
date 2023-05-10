@@ -9,12 +9,6 @@ class Commodity {
         this.url = url;
         this.returnMoney = currentAmount * value
     }
-
-    purchase(i){
-        this.currentAmount += i;
-        this.returnMoney = this.value * this.currentAmount
-        return i * this.price
-    }
 }
 
 class User {
@@ -39,38 +33,8 @@ class User {
             new Commodity("Hotel Skyscraper", true, 25000000, 5, 10000000000, 0, "https://cdn.pixabay.com/photo/2018/08/04/17/33/hotel-3584086_960_720.png"),
             new Commodity("Bullet-Speed Sky Railway", true, 30000000000, 1, 10000000000000, 0, "https://cdn.pixabay.com/photo/2023/04/05/21/47/train-7902370_960_720.png"),
         ];
-        this.amountCommodity = new Map();
-        for (let ele of this.commodity) {
-            this.amountCommodity.set(ele.name, ele);
-        }
     }
 
-    fncPerSec(){
-        // 日付
-        this.days += 1
-        // 年齢
-        this.age = 20 + Math.floor(this.days / 365)
-        // 毎秒所得
-        this.money += this.daysIncrease
-    }
-
-    setReturnPerDays(){
-        this.daysIncrease = 0;
-        for(let commodity of this.amountCommodity.values()){
-            if(commodity.isSecInc){
-                this.daysIncrease += commodity.returnMoney
-            }
-        }
-    }
-
-    payment(fee){
-        this.money -= fee;
-    }
-
-    makeBurger(){
-        const performance = this.amountCommodity.get("Flip").returnMoney
-        this.money += performance;
-    }
 }
 
 const config = {
@@ -83,6 +47,39 @@ const config = {
     buyItems: document.getElementById("buyItems"),
     btns: document.getElementById("btns"),
 };
+
+function fncPerSec(user){
+    // 日付
+    user.days += 1
+    // 年齢
+    user.age = 20 + Math.floor(user.days / 365)
+    // 毎秒所得
+    user.money += user.daysIncrease
+}
+
+function setReturnPerDays(user){
+    user.daysIncrease = 0;
+    for(let commodity of user.commodity){
+        if(commodity.isSecInc){
+            user.daysIncrease += commodity.returnMoney
+        }
+    }
+}
+
+function purchase(commodity, i){
+    commodity.currentAmount += i;
+    commodity.returnMoney = commodity.value * commodity.currentAmount
+    return i * commodity.price
+}
+
+function payment(user, fee){
+    user.money -= fee;
+}
+
+function makeBurger(user){
+    const performance = user.commodity.find(ele => ele.name == "Flip").returnMoney
+    user.money += performance;
+}
 
 function hidePage(ele) {
     ele.classList.remove("d-flex");
@@ -101,15 +98,29 @@ function initializeUser() {
     createBurger(user);
     createUserInfo(user);
     createBuyItems(user);
-    createLocalBtn(user);
-    console.log(user)
-    console.log("initialize")
-
+    
     user.intervalId = setInterval(()=>{
-        user.fncPerSec();
+        fncPerSec(user);
         update(user, config.userInfo, createUserInfo)
+        createLocalBtn(user);
+        console.log(user)
     }, 1000)
-    return user
+}
+
+function drawUser(ele) {
+    const user = JSON.parse(ele);
+    hidePage(config.welcomePage);
+    drawPage(config.gamePage);
+    createBurger(user);
+    createUserInfo(user);
+    createBuyItems(user);
+    
+    user.intervalId = setInterval(()=>{
+        fncPerSec(user);
+        update(user, config.userInfo, createUserInfo)
+        createLocalBtn(user);
+        console.log(user)
+    }, 1000)
 }
 
 function update(user, element, fnc){
@@ -118,11 +129,11 @@ function update(user, element, fnc){
 }
 
 const createBurger = (user) => {
-    const currentBurger = user.amountCommodity.get("burger")
+    const currentBurger = user.commodity.find(ele => ele.name == "burger")
     config.burger.innerHTML = `
         <div id="burgerInfo" class="d-flex flex-column justify-content-center align-items-center bg-navy my-3">
             <div class="info">${currentBurger.currentAmount} Burger</div>
-            <div class="info">$${user.amountCommodity.get("Flip").returnMoney} / click</div>
+            <div class="info">$${user.commodity.find(ele => ele.name == "Flip").returnMoney} / click</div>
             <div class="info">$${user.daysIncrease} / days</div>
         </div>
         <div>
@@ -133,7 +144,7 @@ const createBurger = (user) => {
     const burgerEvent = burger.querySelectorAll("#burgerImg")[0]
     burgerEvent.addEventListener("click", ()=>{
         currentBurger.currentAmount += 1
-        user.makeBurger()
+        makeBurger(user)
         update(user, config.userInfo, createUserInfo);
         update(user, config.burger, createBurger);
     })
@@ -162,7 +173,7 @@ const createBuyItems = (user) => {
         "bg-navy",
         "flex-column",
     )
-    for(let ele of user.amountCommodity.values()){
+    for(let ele of user.commodity){
         if(ele.name == "burger") continue;
         commodityList.innerHTML += `
             <div id="${ele.name}" class="items my-2 container d-flex info">
@@ -184,7 +195,7 @@ const createBuyItems = (user) => {
         commodity.addEventListener("click", ()=>{
             hidePage(commodityList)
             drawPage(commodityPage)
-            const item = user.amountCommodity.get(commodity.id);
+            const item = user.commodity.find(ele => ele.name == commodity.id);
             commodityPage.innerHTML = createBuyPage(item)
             
             const increaseNum = commodityPage.querySelectorAll("#increaseValue")[0]
@@ -194,9 +205,9 @@ const createBuyItems = (user) => {
                 }else if(user.money < item.price * parseInt(increaseNum.value)){
                     alert("現在の所持金では購入できません。")
                 }else{
-                    const fee = item.purchase(parseInt(increaseNum.value))
-                    user.setReturnPerDays();
-                    user.payment(fee);
+                    const fee = purchase(item, parseInt(increaseNum.value))
+                    setReturnPerDays(user);
+                    payment(user, fee);
                 }
                 update(user, config.buyItems, createBuyItems)
                 update(user, config.burger, createBurger);
@@ -237,7 +248,6 @@ function createBuyPage(ele){
         </div>
 
     `;
-
     return container;
 }
 
@@ -247,13 +257,16 @@ function createLocalBtn(user){
         <button id="save" class="m-2 btn btn-primary">save</button>
     `;
 
-    console.log(user.name)
     const jsonUser = JSON.stringify(user)
 
     config.btns.querySelectorAll("#save")[0].addEventListener("click", ()=>{
         localStorage.setItem(user.name, jsonUser);
-        console.log(localStorage.getItem(user.name))
+        console.log(jsonUser)
         alert("save!");
+        clearGamePage();
+        clearInterval(user.intervalId)
+        hidePage(config.gamePage);
+        drawPage(config.welcomePage);
     })
 
     config.btns.querySelectorAll("#reset")[0].addEventListener("click", ()=>{
@@ -268,4 +281,10 @@ function clearGamePage(){
     config.userInfo.innerHTML = "";
     config.buyItems.innerHTML = "";
     config.btns.innerHTML = "";
+}
+
+function login(){
+    const user = localStorage.getItem(config.name.value)
+    if(user == null) alert("ユーザー情報がありません。");
+    else drawUser(user);
 }
