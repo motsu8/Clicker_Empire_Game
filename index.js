@@ -1,5 +1,5 @@
 class Commodity {
-    constructor(name, isSecInc, value, maxAmount, price, currentAmount, url) {
+    constructor(name, isSecInc, value, maxAmount, price, currentAmount, url, type) {
         this.name = name;
         this.isSecInc = isSecInc;
         this.value = value;
@@ -8,6 +8,7 @@ class Commodity {
         this.price = price;
         this.url = url;
         this.returnMoney = currentAmount * value
+        this.type = type;
     }
 }
 
@@ -20,18 +21,18 @@ class User {
         this.daysIncrease = 0;
         this.intervalId = null
         this.commodity = [
-            new Commodity("burger", false, 25, Infinity, 0, 0, "https://cdn.pixabay.com/photo/2014/04/02/17/00/burger-307648_960_720.png"),
-            new Commodity("Flip", false, 1000, 500, 15000, 1, "https://cdn.pixabay.com/photo/2019/06/30/20/09/grill-4308709_960_720.png"),
-            new Commodity("ETF Stock", true, 0.001, Infinity, 300000, 0, "https://cdn.pixabay.com/photo/2018/03/15/11/29/bitcoin-3227945_960_720.png"),
-            new Commodity("ETF Bounds", true, 0.0007, Infinity, 300000, 0, "https://cdn.pixabay.com/photo/2018/03/15/11/29/bitcoin-3227945_960_720.png"),
-            new Commodity("Lemonade Stand", true, 30, 1000, 30000, 0, "https://cdn.pixabay.com/photo/2012/04/15/20/36/juice-35236_960_720.png"),
-            new Commodity("Ice Cream Truck", true, 120, 500, 100000, 0, "https://cdn.pixabay.com/photo/2016/07/27/03/11/ice-cream-1544475_960_720.png"),
-            new Commodity("House", true, 32000, 100, 20000000, 0, "https://cdn.pixabay.com/photo/2013/07/13/12/48/cottage-160367_960_720.png"),
-            new Commodity("TownHouse", true, 64000, 100, 40000000, 0, "https://cdn.pixabay.com/photo/2012/05/07/17/51/apartment-48821_960_720.png"),
-            new Commodity("Mansion", true, 500000, 20, 250000000, 0, "https://cdn.pixabay.com/photo/2017/11/21/10/26/building-2967810_960_720.png"),
-            new Commodity("Industrial Space", true, 2200000, 10, 1000000000, 0, "https://cdn.pixabay.com/photo/2012/05/07/17/35/factory-48781_960_720.png"),
-            new Commodity("Hotel Skyscraper", true, 25000000, 5, 10000000000, 0, "https://cdn.pixabay.com/photo/2018/08/04/17/33/hotel-3584086_960_720.png"),
-            new Commodity("Bullet-Speed Sky Railway", true, 30000000000, 1, 10000000000000, 0, "https://cdn.pixabay.com/photo/2023/04/05/21/47/train-7902370_960_720.png"),
+            new Commodity("burger", false, 25, Infinity, 0, 0, "https://cdn.pixabay.com/photo/2014/04/02/17/00/burger-307648_960_720.png", "ability"),
+            new Commodity("Flip", false, 1000, 500, 15000, 1, "https://cdn.pixabay.com/photo/2019/06/30/20/09/grill-4308709_960_720.png", "ability"),
+            new Commodity("ETF Stock", true, 0.001, Infinity, 300000, 0, "https://cdn.pixabay.com/photo/2018/03/15/11/29/bitcoin-3227945_960_720.png", "Stock"),
+            new Commodity("ETF Bounds", true, 0.0007, Infinity, 300000, 0, "https://cdn.pixabay.com/photo/2018/03/15/11/29/bitcoin-3227945_960_720.png", "Bounds"),
+            new Commodity("Lemonade Stand", true, 30, 1000, 30000, 0, "https://cdn.pixabay.com/photo/2012/04/15/20/36/juice-35236_960_720.png", "realEstate"),
+            new Commodity("Ice Cream Truck", true, 120, 500, 100000, 0, "https://cdn.pixabay.com/photo/2016/07/27/03/11/ice-cream-1544475_960_720.png", "realEstate"),
+            new Commodity("House", true, 32000, 100, 20000000, 0, "https://cdn.pixabay.com/photo/2013/07/13/12/48/cottage-160367_960_720.png", "realEstate"),
+            new Commodity("TownHouse", true, 64000, 100, 40000000, 0, "https://cdn.pixabay.com/photo/2012/05/07/17/51/apartment-48821_960_720.png", "realEstate"),
+            new Commodity("Mansion", true, 500000, 20, 250000000, 0, "https://cdn.pixabay.com/photo/2017/11/21/10/26/building-2967810_960_720.png", "realEstate"),
+            new Commodity("Industrial Space", true, 2200000, 10, 1000000000, 0, "https://cdn.pixabay.com/photo/2012/05/07/17/35/factory-48781_960_720.png", "realEstate"),
+            new Commodity("Hotel Skyscraper", true, 25000000, 5, 10000000000, 0, "https://cdn.pixabay.com/photo/2018/08/04/17/33/hotel-3584086_960_720.png", "realEstate"),
+            new Commodity("Bullet-Speed Sky Railway", true, 30000000000, 1, 10000000000000, 0, "https://cdn.pixabay.com/photo/2023/04/05/21/47/train-7902370_960_720.png", "realEstate"),
         ];
     }
 
@@ -54,6 +55,7 @@ function fncPerSec(user){
     // 年齢
     user.age = 20 + Math.floor(user.days / 365)
     // 毎秒所得
+    setReturnPerDays(user);
     user.money += user.daysIncrease
 }
 
@@ -61,15 +63,36 @@ function setReturnPerDays(user){
     user.daysIncrease = 0;
     for(let commodity of user.commodity){
         if(commodity.isSecInc){
-            user.daysIncrease += commodity.returnMoney
+            switch(commodity.type){
+                case("ability"):
+                case("realEstate"):
+                    user.daysIncrease += commodity.returnMoney;
+                    break;
+                case("Stock"):
+                case("Bounds"):
+                    user.daysIncrease += Math.floor(user.money * commodity.returnMoney);
+                    break;
+            }
         }
     }
 }
 
 function purchase(commodity, i){
     commodity.currentAmount += i;
-    commodity.returnMoney = commodity.value * commodity.currentAmount
-    return i * commodity.price
+    const fee = i * commodity.price;
+    
+    switch(commodity.type){
+        case("ability"):
+        case("realEstate"):
+        case("Bounds"):
+            commodity.returnMoney = commodity.value * commodity.currentAmount;
+            break;
+        case("Stock"):
+            commodity.price = Math.floor(commodity.price * 1.1)
+            commodity.returnMoney = commodity.value * commodity.currentAmount;
+            break;
+    }
+    return fee;
 }
 
 function payment(user, fee){
@@ -102,6 +125,7 @@ function initializeUser() {
     user.intervalId = setInterval(()=>{
         fncPerSec(user);
         update(user, config.userInfo, createUserInfo)
+        update(user, config.burger, createBurger)
         createLocalBtn(user);
         console.log(user)
     }, 1000)
@@ -118,6 +142,7 @@ function drawUser(ele) {
     user.intervalId = setInterval(()=>{
         fncPerSec(user);
         update(user, config.userInfo, createUserInfo)
+        update(user, config.burger, createBurger)
         createLocalBtn(user);
         console.log(user)
     }, 1000)
@@ -175,7 +200,22 @@ const createBuyItems = (user) => {
     )
     for(let ele of user.commodity){
         if(ele.name == "burger") continue;
-        commodityList.innerHTML += `
+        if(ele.type == "ability" || ele.type == "realEstate"){            
+            commodityList.innerHTML += `
+                <div id="${ele.name}" class="items my-2 container d-flex info">
+                    <img src="${ele.url}" class="img-fluid p-3 col-4">
+                    <div class="col-8">
+                        <div class="d-flex justify-content-between">
+                            <h3 class="p-3">${ele.name}</h3>
+                            <h3 class="p-3">${ele.currentAmount}</h3>
+                        </div>
+                        <div class="p-2">price: $${ele.price}</div>
+                        <div class="p-2">return: $${ele.value}</div>
+                    </div>
+                </div>
+            `;
+        }else if(ele.type == "Stock" || ele.type == "Bounds"){
+            commodityList.innerHTML += `
             <div id="${ele.name}" class="items my-2 container d-flex info">
                 <img src="${ele.url}" class="img-fluid p-3 col-4">
                 <div class="col-8">
@@ -184,10 +224,11 @@ const createBuyItems = (user) => {
                         <h3 class="p-3">${ele.currentAmount}</h3>
                     </div>
                     <div class="p-2">price: $${ele.price}</div>
-                    <div class="p-2">return: $${ele.value}</div>
+                    <div class="p-2">return: ${(100 * ele.value).toPrecision(1)} %</div>
                 </div>
             </div>
         `;
+        }
     }
 
     let commodityEvent = commodityList.querySelectorAll('.items');
