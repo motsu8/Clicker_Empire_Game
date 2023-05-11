@@ -159,18 +159,25 @@ const createBurger = (user) => {
             <div class="info">$${user.commodity.find(ele => ele.name == "Flip").returnMoney} / click</div>
             <div class="info">$${user.daysIncrease} / days</div>
         </div>
-        <div>
-            <img src="${currentBurger.url}" width=80%  id="burgerImg" class="itemImg">
+        <div class="">
+            <img src="${currentBurger.url}" width=80%  id="burgerImg" class="itemImg jump-target">
         </div>
     `;
 
     const burgerEvent = burger.querySelectorAll("#burgerImg")[0]
-    burgerEvent.addEventListener("click", ()=>{
+    burgerEvent.addEventListener("click", (e)=>{
         currentBurger.currentAmount += 1
+        jumpAnimation(e.target.parentElement);
         makeBurger(user)
         update(user, config.userInfo, createUserInfo);
         update(user, config.burger, createBurger);
     })
+}
+
+const jumpAnimation = (ele) => {
+    ele.addEventListener("mousedown", () => {ele.classList.add("jump");});
+    ele.addEventListener("animationend", () => {ele.classList.remove("jump");});
+    ele.addEventListener("animationcancel", () => {ele.classList.remove("jump");});
 }
 
 const createUserInfo = (user) => {
@@ -200,7 +207,7 @@ const createBuyItems = (user) => {
         if(ele.name == "burger") continue;
         if(ele.type == "ability" || ele.type == "realEstate"){            
             commodityList.innerHTML += `
-                <div id="${ele.name}" class="items my-2 container d-flex info">
+                <div id="${ele.name}" class="items my-2 container d-flex info jump-target">
                     <img src="${ele.url}" class="img-fluid p-3 col-4">
                     <div class="col-8">
                         <div class="d-flex justify-content-between">
@@ -214,7 +221,7 @@ const createBuyItems = (user) => {
             `;
         }else if(ele.type == "Stock" || ele.type == "Bounds"){
             commodityList.innerHTML += `
-            <div id="${ele.name}" class="items my-2 container d-flex info">
+            <div id="${ele.name}" class="items my-2 container d-flex info jump-target">
                 <img src="${ele.url}" class="img-fluid p-3 col-4">
                 <div class="col-8">
                     <div class="d-flex justify-content-between">
