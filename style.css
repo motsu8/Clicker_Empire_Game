@@ -27,6 +27,16 @@ body{
     height: 75%;    
 }
 
+.jump-target{
+    display: inline-block;
+    cursor: pointer;
+}
+
+.jump-target:hover{
+    border-bottom-color: transparent;
+	transform: translateY(0.5em);
+}
+
 .overflow-scroll{
     overflow: auto;
 }
