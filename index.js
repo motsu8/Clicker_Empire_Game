@@ -127,7 +127,6 @@ function initializeUser() {
         update(user, config.userInfo, createUserInfo)
         update(user, config.burger, createBurger)
         createLocalBtn(user);
-        console.log(user)
     }, 1000)
 }
 
@@ -144,7 +143,6 @@ function drawUser(ele) {
         update(user, config.userInfo, createUserInfo)
         update(user, config.burger, createBurger)
         createLocalBtn(user);
-        console.log(user)
     }, 1000)
 }
 
@@ -302,7 +300,6 @@ function createLocalBtn(user){
 
     config.btns.querySelectorAll("#save")[0].addEventListener("click", ()=>{
         localStorage.setItem(user.name, jsonUser);
-        console.log(jsonUser)
         alert("save!");
         clearGamePage();
         clearInterval(user.intervalId)
